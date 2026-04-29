@@ -7,9 +7,14 @@ const emptyForm = {
   password: "",
 };
 
+const errorMessages = {
+  "Invalid credentials": "Неверный логин или пароль.",
+  "User with this username already exists.": "Пользователь с таким логином уже существует.",
+};
+
 function getErrorText(error) {
   if (!error) {
-    return "";
+    return " Что-то пошло не так.";
   }
 
   if (typeof error === "string") {
@@ -49,7 +54,7 @@ export default function App() {
   function openAuth(nextMode) {
     setMode(nextMode);
     setForm(emptyForm);
-    setError("");
+    setError("Что-то пошло не так.");
   }
 
   function updateField(event) {
@@ -62,7 +67,7 @@ export default function App() {
   async function submitAuth(event) {
     event.preventDefault();
     setLoading(true);
-    setError("");
+    setError("Что-то пошло не так.");
 
     const path = mode === "register" ? "/auth/register/" : "/auth/login/";
     const payload =
