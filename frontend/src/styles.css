@@ -2,111 +2,166 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Цвета в стиле Ozon */
+  --ozon-blue: #005bff;
+  --ozon-dark: #001a34;
+  --ozon-bg: #f2f5f8;
+  --border: #e5e5e5;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  color: #171717;
-  background: #ffffff;
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ozon-dark);
+  background: var(--ozon-bg); /* Светло-серый фон для солидности */
+  /* Используем системные шрифты, которые выглядят более современно */
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-button,
-input {
+button, input {
   font: inherit;
+  transition: all 0.2s ease;
 }
 
+/* Основные кнопки */
 button {
-  min-height: 36px;
-  padding: 0 14px;
-  border: 1px solid #d4d4d4;
-  border-radius: 6px;
-  color: #171717;
-  background: #ffffff;
+  min-height: 44px; /* Чуть выше для удобства */
+  padding: 0 20px;
+  border: none;
+  border-radius: 10px; /* Более мягкие скругления */
+  font-weight: 600;
   cursor: pointer;
 }
 
-button:hover {
-  background: #f5f5f5;
+/* Синяя главная кнопка */
+.btn-primary {
+  background: var(--ozon-blue);
+  color: #ffffff;
 }
 
-button:disabled {
-  cursor: default;
-  opacity: 0.7;
+.btn-primary:hover {
+  background: #004ecc;
+}
+
+/* Темная кнопка (как "Войти" на скрине) */
+.btn-dark {
+  background: var(--ozon-dark);
+  color: #ffffff;
+}
+
+.btn-dark:hover {
+  background: #002a54;
 }
 
 input {
   width: 100%;
-  min-height: 40px;
-  padding: 0 12px;
+  min-height: 48px;
+  padding: 0 16px;
   border: 1px solid #d4d4d4;
-  border-radius: 6px;
+  border-radius: 10px;
+  background: #ffffff;
 }
 
+input:focus {
+  outline: none;
+  border-color: var(--ozon-blue);
+  box-shadow: 0 0 0 3px rgba(0, 91, 255, 0.1);
+}
+
+/* Хедер */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  min-height: 64px;
-  padding: 0 24px;
-  border-bottom: 1px solid #e5e5e5;
+  min-height: 80px; /* Выше для "воздуха" */
+  padding: 0 8%;
   background: #ffffff;
+  border-bottom: 1px solid var(--border);
 }
 
 .brand {
-  color: inherit;
-  font-size: 18px;
-  font-weight: 700;
+  color: var(--ozon-dark);
+  font-size: 22px;
+  font-weight: 900; /* Очень жирный шрифт */
   text-decoration: none;
+  letter-spacing: -0.5px;
 }
 
-.auth {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.username {
-  color: #525252;
-}
-
-.auth-panel {
-  position: absolute;
-  top: 76px;
-  right: 24px;
+/* Главный блок (Hero) */
+.hero {
   display: grid;
-  gap: 10px;
-  width: min(320px, calc(100vw - 32px));
-  padding: 16px;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 48px;
+  padding: 80px 8%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.auth-actions {
+.hero-text h1 {
+  font-size: clamp(32px, 5vw, 64px); /* Адаптивный размер */
+  font-weight: 900;
+  line-height: 1.05;
+  margin: 0 0 24px 0;
+  color: var(--ozon-dark);
+}
+
+.hero-text p {
+  font-size: 18px;
+  line-height: 1.5;
+  color: #4b5563;
+  margin-bottom: 40px;
+}
+
+/* Те самые овальные карточки справа */
+.hero-visual {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  gap: 20px;
+  justify-content: center;
+}
+
+.visual-box {
+  background: #dbeafe;
+  border-radius: 100px; /* Овальная форма */
+  width: 150px;
+  height: 300px;
+}
+
+.visual-box.blue { background: var(--ozon-blue); }
+.visual-box.light { background: #ffffff; border: 1px solid var(--border); }
+
+/* Модалка авторизации */
+.auth-panel {
+  position: fixed; /* Лучше центрировать как модалку */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display: grid;
+  gap: 16px;
+  width: min(400px, 90vw);
+  padding: 32px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
 }
 
 .error {
-  margin: 0;
-  color: #b42318;
+  color: #d92d20;
   font-size: 14px;
+  background: #fef3f2;
+  padding: 10px;
+  border-radius: 6px;
 }
 
-.page {
-  min-height: calc(100vh - 64px);
-}
-
-@media (max-width: 520px) {
-  .header {
-    padding: 0 16px;
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 40px 24px;
   }
-
-  .auth-panel {
-    right: 16px;
-  }
+  .hero-text p { margin-inline: auto; }
+  .hero-visual { display: none; } /* Скрываем декор на мобилках */
 }

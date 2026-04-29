@@ -1,30 +1,20 @@
 import { useEffect, useState } from "react";
 import { apiRequest, clearToken, getToken, setToken } from "./api";
 
+// Начальное состояние формы
 const emptyForm = {
   username: "",
   email: "",
   password: "",
 };
 
-const errorMessages = {
-  "Invalid credentials": "Неверный логин или пароль.",
-  "User with this username already exists.": "Пользователь с таким логином уже существует.",
-};
-
+// Функция для красивого вывода ошибок от Django
 function getErrorText(error) {
-  if (!error) {
-    return " Что-то пошло не так.";
-  }
+  if (!error) return "Произошла неизвестная ошибка.";
+  if (typeof error === "string") return error;
+  if (error.detail) return error.detail;
 
-  if (typeof error === "string") {
-    return error;
-  }
-
-  if (error.detail) {
-    return error.detail;
-  }
-
+  // Если Django вернул ошибки валидации (например, { "username": ["Обязательное поле"] })
   const firstKey = Object.keys(error)[0];
   const firstValue = error[firstKey];
   if (Array.isArray(firstValue)) {
@@ -36,27 +26,32 @@ function getErrorText(error) {
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [mode, setMode] = useState(null);
+  const [mode, setMode] = useState(null); // null, "login" или "register"
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Проверка авторизации при загрузке страницы
   useEffect(() => {
-    if (!getToken()) {
-      return;
-    }
+    if (!getToken()) return;
 
+    // Стучимся в /api/auth/me/ (префикс /api берется из api.js)
     apiRequest("/auth/me/")
       .then(setUser)
-      .catch(() => clearToken());
+      .catch(() => {
+        clearToken();
+        setUser(null);
+      });
   }, []);
 
+  // Открытие модалки
   function openAuth(nextMode) {
     setMode(nextMode);
     setForm(emptyForm);
-    setError("Что-то пошло не так.");
+    setError(""); 
   }
 
+  // Обновление полей формы
   function updateField(event) {
     setForm((current) => ({
       ...current,
@@ -64,64 +59,70 @@ export default function App() {
     }));
   }
 
+  // Отправка формы (Логин или Регистрация)
   async function submitAuth(event) {
     event.preventDefault();
     setLoading(true);
-    setError("Что-то пошло не так.");
+    setError("");
 
+    // Пути должны строго совпадать с urls.py в Django
     const path = mode === "register" ? "/auth/register/" : "/auth/login/";
-    const payload =
-      mode === "register"
-        ? form
-        : { username: form.username, password: form.password };
+    const payload = mode === "register" 
+      ? form 
+      : { username: form.username, password: form.password };
 
     try {
       const data = await apiRequest(path, {
         method: "POST",
         body: JSON.stringify(payload),
       });
+
       setToken(data.token);
-      setUser(data.user);
+      setUser(data.user); // Убедись, что твой бэкенд возвращает объект user вместе с токеном
       setMode(null);
       setForm(emptyForm);
     } catch (authError) {
+      console.error("Auth Error:", authError);
       setError(getErrorText(authError));
     } finally {
       setLoading(false);
     }
   }
 
+  // Выход из системы
   async function logout() {
     try {
+      // Django TokenAuth обычно не требует запроса на выход, но для порядка можно
       await apiRequest("/auth/logout/", { method: "POST" });
+    } catch (e) {
+      console.log("Logout request failed, cleaning up local storage anyway.");
     } finally {
       clearToken();
       setUser(null);
-      setMode(null);
     }
   }
 
   return (
-    <>
+    <div className="app-container">
       <header className="header">
         <a className="brand" href="/">
-          Template
+          FinTracker
         </a>
 
         <div className="auth">
           {user ? (
             <>
-              <span className="username">{user.username}</span>
-              <button type="button" onClick={logout}>
+              <span className="username">Привет, {user.username}</span>
+              <button className="btn-secondary" type="button" onClick={logout}>
                 Выйти
               </button>
             </>
           ) : (
             <>
-              <button type="button" onClick={() => openAuth("login")}>
+              <button className="btn-dark" type="button" onClick={() => openAuth("login")}>
                 Войти
               </button>
-              <button type="button" onClick={() => openAuth("register")}>
+              <button className="btn-dark" type="button" onClick={() => openAuth("register")}>
                 Регистрация
               </button>
             </>
@@ -129,48 +130,75 @@ export default function App() {
         </div>
       </header>
 
+      {/* Модальное окно авторизации */}
       {mode && (
-        <form className="auth-panel" onSubmit={submitAuth}>
-          <input
-            name="username"
-            placeholder="Логин"
-            value={form.username}
-            onChange={updateField}
-            autoComplete="username"
-            required
-          />
-          {mode === "register" && (
+        <div className="modal-overlay">
+          <form className="auth-panel" onSubmit={submitAuth}>
+            <h2>{mode === "register" ? "Создать аккаунт" : "С возвращением"}</h2>
+            
             <input
-              name="email"
-              placeholder="Email"
-              type="email"
-              value={form.email}
+              name="username"
+              placeholder="Логин"
+              value={form.username}
               onChange={updateField}
-              autoComplete="email"
+              autoComplete="username"
+              required
             />
-          )}
-          <input
-            name="password"
-            placeholder="Пароль"
-            type="password"
-            value={form.password}
-            onChange={updateField}
-            autoComplete={mode === "register" ? "new-password" : "current-password"}
-            required
-          />
-          {error && <p className="error">{error}</p>}
-          <div className="auth-actions">
-            <button type="button" onClick={() => setMode(null)}>
-              Отмена
-            </button>
-            <button type="submit" disabled={loading}>
-              {loading ? "..." : mode === "register" ? "Создать" : "Войти"}
-            </button>
-          </div>
-        </form>
+
+            {mode === "register" && (
+              <input
+                name="email"
+                placeholder="Email"
+                type="email"
+                value={form.email}
+                onChange={updateField}
+                autoComplete="email"
+                required
+              />
+            )}
+
+            <input
+              name="password"
+              placeholder="Пароль"
+              type="password"
+              value={form.password}
+              onChange={updateField}
+              autoComplete={mode === "register" ? "new-password" : "current-password"}
+              required
+            />
+
+            {error && <p className="error-message">{error}</p>}
+
+            <div className="auth-actions">
+              <button type="button" className="btn-cancel" onClick={() => setMode(null)}>
+                Отмена
+              </button>
+              <button className="btn-primary" type="submit" disabled={loading}>
+                {loading ? "Загрузка..." : mode === "register" ? "Создать" : "Войти"}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
-      <main className="page" />
-    </>
+      <main className="page">
+        {!user && !mode && (
+          <section className="hero">
+            <h1>Управляйте финансами грамотно</h1>
+            <p>Простой и удобный трекер ваших доходов и расходов.</p>
+            <button className="btn-main" onClick={() => openAuth("register")}>
+              Начать использование
+            </button>
+          </section>
+        )}
+
+        {user && (
+          <div className="dashboard">
+            <h2>Ваш личный кабинет</h2>
+            <p>Здесь скоро появятся ваши транзакции и графики.</p>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
