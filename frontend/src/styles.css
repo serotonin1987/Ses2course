@@ -165,3 +165,23 @@ input:focus {
   .hero-text p { margin-inline: auto; }
   .hero-visual { display: none; } /* Скрываем декор на мобилках */
 }
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px; /* Или какой у тебя отступ */
+}
+
+.password-wrapper input {
+  margin-bottom: 0 !important; /* Чтобы div не ломался */
+}
+
+.password-wrapper button {
+  color: #666;
+  transition: color 0.2s;
+}
+
+.password-wrapper button:hover {
+  color: #000;
+}
