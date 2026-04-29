@@ -30,6 +30,7 @@ export default function App() {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Проверка авторизации при загрузке страницы
   useEffect(() => {
@@ -49,6 +50,7 @@ export default function App() {
     setMode(nextMode);
     setForm(emptyForm);
     setError(""); 
+    setShowPassword(false);
   }
 
   // Обновление полей формы
@@ -199,6 +201,7 @@ export default function App() {
           </div>
         )}
       </main>
+      
     </div>
   );
 }
