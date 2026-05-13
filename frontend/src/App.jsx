@@ -172,7 +172,7 @@ export default function App() {
               ) : (
                 <div className="card stat-card empty">
                   <p>У вас пока нет активных целей</p>
-                  <button className="btn-small">Создать цель</button>
+                  <button className="btn-secondary">Создать цель</button>
                 </div>
               )}
             </div>
@@ -194,7 +194,7 @@ export default function App() {
                   <p className="empty-text">Операций пока нет</p>
                 )}
               </div>
-              <button className="btn-add-flat">+ Добавить трату</button>
+              <button className="btn-ghost">+ Добавить трату</button>
             </div>
           </div>
         )}
