@@ -98,8 +98,8 @@ export default function App() {
   return (
     <div className="app-container">
       <header className="header">
-        <a className="brand" href="/">
-          <img src={logoDark} alt="FinTracker" style={{ height: 36 }} />
+        <a className="brand-logo-link" href="/">
+          <img src={logoDark} alt="FinTracker" className="brand-logo-image" />
         </a>
         <div className="auth">
           {user ? (
