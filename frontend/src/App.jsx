@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiRequest, clearToken, getToken, setToken } from "./api";
-import logoDark from "./assets/logo-fintracker-dark.png";
+import logoDark from "./assets/logo-fintracker-dark-v2.png";
 
 const emptyForm = { username: "", email: "", password: "" };
 
@@ -22,6 +22,7 @@ export default function App() {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
 
   // --- НОВЫЕ СОСТОЯНИЯ ДЛЯ MVP ---
   const [transactions, setTransactions] = useState([]);
@@ -39,7 +40,17 @@ export default function App() {
       console.error("Ошибка загрузки данных трекера", e);
     }
   }
-
+  const [isDarkMode, setIsDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+  
   useEffect(() => {
     if (!getToken()) return;
     apiRequest("/auth/me/")
@@ -98,6 +109,9 @@ export default function App() {
   return (
     <div className="app-container">
       <header className="header">
+        <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
+          {isDarkMode ? "☀️ Светло" : "🌙 Темно"}
+        </button>
         <a className="brand-logo-link" href="/">
           <img src={logoDark} alt="FinTracker" className="brand-logo-image" />
           <span className="brand-text">FinTracker</span>
