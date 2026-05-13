@@ -8,6 +8,7 @@
   --ozon-dark: #001a34;
   --ozon-bg: #f2f5f8;
   --border: #e5e5e5;
+  --success-green: #059669; /* Зеленый для подтверждений и кнопок */
 }
 
 body {
@@ -25,22 +26,29 @@ button, input {
   transition: all 0.2s ease;
 }
 
-/* Вторичная кнопка (как «Создать цель» на скрине) */
+/* Создать цель — Голубая */
 .btn-secondary {
-  background: #ffffff;
-  border: 1.5px solid var(--ozon-dark);
-  color: var(--ozon-dark);
+  background: #e0f2fe; /* светлый голубой фон */
+  border: 2px solid var(--ozon-blue);
+  color: var(--ozon-blue);
+  box-shadow: none;
 }
 
 .btn-secondary:hover {
-  background: #f0f0f0;
+  background: #bae6fd;
+  border-color: #004ecc;
 }
 
-/* Призрачная кнопка (как «+ Добавить трату») */
+/* Добавить трату — Зеленая */
 .btn-ghost {
-  background: #f0f2f5;
-  color: var(--ozon-dark);
-  border: none;
+  background: #ecfdf5; /* светло-зеленый фон */
+  border: 2px solid var(--success-green);
+  color: var(--success-green);
+}
+
+.btn-ghost:hover {
+  background: #d1fae5;
+  border-color: #027a44;
 }
 /* Основные кнопки */
 button {
@@ -134,6 +142,7 @@ button {
 .btn-primary {
   background: var(--ozon-blue);
   color: #ffffff;
+  border: 2px solid rgba(0,91,255,0.12);
 }
 
 .btn-primary:hover {
@@ -144,6 +153,7 @@ button {
 .btn-dark {
   background: var(--ozon-dark);
   color: #ffffff;
+  border: 2px solid rgba(0,26,52,0.12);
 }
 
 .btn-dark:hover {
@@ -201,6 +211,7 @@ input:focus {
   width: auto;   /* Сохраняет пропорции */
   display: block;
 }
+
 
 /* Текст рядом с логотипом */
 .brand-text {
