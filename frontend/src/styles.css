@@ -25,6 +25,23 @@ button, input {
   transition: all 0.2s ease;
 }
 
+/* Вторичная кнопка (как «Создать цель» на скрине) */
+.btn-secondary {
+  background: #ffffff;
+  border: 1.5px solid var(--ozon-dark);
+  color: var(--ozon-dark);
+}
+
+.btn-secondary:hover {
+  background: #f0f0f0;
+}
+
+/* Призрачная кнопка (как «+ Добавить трату») */
+.btn-ghost {
+  background: #f0f2f5;
+  color: var(--ozon-dark);
+  border: none;
+}
 /* Основные кнопки */
 button {
   min-height: 44px; /* Чуть выше для удобства */
@@ -35,6 +52,84 @@ button {
   cursor: pointer;
 }
 
+/* Сетка дашборда */
+.dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 8%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Стили карточек */
+.card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.stat-card .label {
+  color: #667085;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.stat-card .value {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* Прогресс-бар для целей */
+.progress-container {
+  background: #f2f5f8;
+  height: 8px;
+  border-radius: 10px;
+  margin: 16px 0 8px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: var(--ozon-blue);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* Список транзакций */
+.transaction-list {
+  margin: 16px 0;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.transaction-item:last-child { border-bottom: none; }
+
+.minus { color: #d92d20; font-weight: 600; }
+.plus { color: #039855; font-weight: 600; }
+
+/* Overlay для модалки */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 26, 52, 0.6); /* Темный полупрозрачный фон */
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
 /* Синяя главная кнопка */
 .btn-primary {
   background: var(--ozon-blue);
@@ -55,6 +150,15 @@ button {
   background: #002a54;
 }
 
+.balance-value {
+  font-size: 36px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+
 input {
   width: 100%;
   min-height: 48px;
@@ -70,56 +174,95 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(0, 91, 255, 0.1);
 }
 
-/* Хедер */
+
+/* --- СТИЛИ ХЕДЕРА (ОБНОВЛЕННЫЕ ДЛЯ ЛОГО) --- */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 80px; /* Выше для "воздуха" */
+  min-height: 90px; /* Немного выше для "воздуха" вокруг лого */
   padding: 0 8%;
   background: #ffffff;
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); /* Мягкая тень */
 }
 
-.brand {
-  color: var(--ozon-dark);
-  font-size: 22px;
-  font-weight: 900; /* Очень жирный шрифт */
+/* Ссылка-контейнер для лого */
+.brand-logo-link {
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  letter-spacing: -0.5px;
+  height: 60px; /* Максимальная высота контейнера лого */
+}
+
+/* Само изображение логотипа */
+.brand-logo-image {
+  height: 100%; /* Занимает всю высоту контейнера */
+  width: auto;   /* Сохраняет пропорции */
+  display: block;
+}
+
+/* Текст рядом с логотипом */
+.brand-text {
+  margin-left: 12px;
+  font-weight: 700;
+  color: var(--ozon-dark);
+  font-size: 18px;
+  letter-spacing: -0.2px;
+}
+
+/* Группа авторизации (ранее .auth) */
+.auth-group {
+  display: flex;
+  gap: 16px; 
+  align-items: center;
+}
+
+.welcome-text {
+  color: var(--ozon-dark);
+  font-weight: 500;
+  margin-right: 8px;
 }
 
 /* Главный блок (Hero) */
+/* Главный блок (Hero) - превращаем в карточку */
 .hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 48px;
-  padding: 80px 8%;
-  max-width: 1400px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем всё */
+  justify-content: center;
+  gap: 32px;
+  padding: 60px 8%;
+  max-width: 1000px; /* Ограничиваем ширину для аккуратности */
+  margin: 40px auto;
+  
+  /* Стили карточки */
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
 .hero-text h1 {
-  font-size: clamp(32px, 5vw, 64px); /* Адаптивный размер */
-  font-weight: 900;
-  line-height: 1.05;
-  margin: 0 0 24px 0;
-  color: var(--ozon-dark);
+  font-size: clamp(32px, 4vw, 48px);
+  margin-bottom: 16px;
 }
 
 .hero-text p {
   font-size: 18px;
-  line-height: 1.5;
-  color: #4b5563;
-  margin-bottom: 40px;
+  max-width: 600px;
+  margin: 0 auto 32px;
 }
 
-/* Те самые овальные карточки справа */
-.hero-visual {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
+/* Кнопка внутри карточки */
+.btn-main {
+  background: var(--ozon-blue);
+  color: white;
+  padding: 16px 40px;
+  font-size: 18px;
+  border-radius: 12px;
+  width: fit-content;
 }
 
 .visual-box {
@@ -134,18 +277,35 @@ input:focus {
 
 /* Модалка авторизации */
 .auth-panel {
-  position: fixed; /* Лучше центрировать как модалку */
-  top: 50%;
+  position: fixed;
+  /* Сдвигаем верхний левый угол в центр экрана */
+  top: 40%;
   left: 50%;
+  /* Сдвигаем само окно обратно на половину его ширины и высоты */
   transform: translate(-50%, -50%);
-  z-index: 100;
+  
+  z-index: 1000; /* Чтобы было поверх всего */
+  
+  /* Твои существующие стили */
   display: grid;
   gap: 16px;
   width: min(400px, 90vw);
   padding: 32px;
   border-radius: 20px;
   background: #ffffff;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.auth {
+  display: flex;
+  /* Добавляем расстояние между кнопками */
+  gap: 12px; 
+  align-items: center;
+}
+
+/* На всякий случай сбросим лишние отступы у самих кнопок */
+.auth button {
+  margin: 0;
 }
 
 .error {
@@ -167,14 +327,21 @@ input:focus {
 }
 
 .password-wrapper {
+  position: relative; /* Чтобы позиционировать кнопку внутри */
   display: flex;
   align-items: center;
-  width: 100%;
-  margin-bottom: 15px; /* Или какой у тебя отступ */
 }
 
 .password-wrapper input {
-  margin-bottom: 0 !important; /* Чтобы div не ломался */
+  padding-right: 45px; /* Оставляем место для иконки справа */
+}
+
+.password-wrapper button {
+  position: absolute;
+  right: 12px;
+  min-height: 32px; /* Перебиваем общие 44px для компактности */
+  background: transparent;
+  padding: 0;
 }
 
 .password-wrapper button {

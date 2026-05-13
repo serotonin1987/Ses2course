@@ -100,6 +100,7 @@ export default function App() {
       <header className="header">
         <a className="brand-logo-link" href="/">
           <img src={logoDark} alt="FinTracker" className="brand-logo-image" />
+          <span className="brand-text">FinTracker</span>
         </a>
         <div className="auth">
           {user ? (
