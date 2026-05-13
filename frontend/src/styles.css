@@ -28,27 +28,35 @@ button, input {
 
 /* Создать цель — Голубая */
 .btn-secondary {
-  background: #e0f2fe; /* светлый голубой фон */
+  background: var(--ozon-blue);
+  color: #ffffff;
   border: 2px solid var(--ozon-blue);
-  color: var(--ozon-blue);
+  border-radius: 9999px; /* pill */
+  padding: 12px 28px;
+  font-weight: 700;
   box-shadow: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .btn-secondary:hover {
-  background: #bae6fd;
-  border-color: #004ecc;
+  background: #004ecc;
+  transform: translateY(-1px);
 }
 
 /* Добавить трату — Зеленая */
 .btn-ghost {
-  background: #ecfdf5; /* светло-зеленый фон */
+  background: var(--success-green);
+  color: #ffffff;
   border: 2px solid var(--success-green);
-  color: var(--success-green);
+  border-radius: 9999px; /* pill */
+  padding: 12px 20px;
+  font-weight: 700;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .btn-ghost:hover {
-  background: #d1fae5;
-  border-color: #027a44;
+  background: #027a44;
+  transform: translateY(-1px);
 }
 /* Основные кнопки */
 button {
@@ -143,6 +151,8 @@ button {
   background: var(--ozon-blue);
   color: #ffffff;
   border: 2px solid rgba(0,91,255,0.12);
+  border-radius: 12px;
+  padding: 12px 24px;
 }
 
 .btn-primary:hover {
@@ -154,6 +164,8 @@ button {
   background: var(--ozon-dark);
   color: #ffffff;
   border: 2px solid rgba(0,26,52,0.12);
+  border-radius: 12px;
+  padding: 10px 20px;
 }
 
 .btn-dark:hover {
@@ -270,10 +282,11 @@ input:focus {
 .btn-main {
   background: var(--ozon-blue);
   color: white;
-  padding: 16px 40px;
+  padding: 14px 36px;
   font-size: 18px;
-  border-radius: 12px;
+  border-radius: 9999px;
   width: fit-content;
+  font-weight: 700;
 }
 
 .visual-box {
