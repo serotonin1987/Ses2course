@@ -23,6 +23,15 @@ export default function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
+  const [toasts, setToasts] = useState([]);
+
+  function showToast(message, type = "error", duration = 4000) {
+    const id = Date.now() + Math.random();
+    setToasts((t) => [...t, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((t) => t.filter((x) => x.id !== id));
+    }, duration);
+  }
   
 
   // --- НОВЫЕ СОСТОЯНИЯ ДЛЯ MVP ---
@@ -116,7 +125,11 @@ export default function App() {
       setMode(null);
       loadDashboardData(); // Загружаем данные после успешного входа
     } catch (authError) {
-      setError(getErrorText(authError));
+      const msg = getErrorText(authError);
+      // show as bottom toast
+      showToast(msg, "error", 4500);
+      // still set error state for legacy usage if needed
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -247,6 +260,14 @@ export default function App() {
           </div>
         )}
       </main>
+      {/* Toasts */}
+      <div className="toast-wrap">
+        {toasts.map((t) => (
+          <div key={t.id} className={`toast toast-${t.type}`}>
+            {t.message}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

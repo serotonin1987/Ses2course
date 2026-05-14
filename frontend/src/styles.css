@@ -491,3 +491,34 @@ body.dark .error-message {
   border-style: solid;
   border-color: transparent transparent var(--error-red) transparent;
 }
+
+/* Toast container at bottom */
+.toast-wrap {
+  position: fixed;
+  left: 0; right: 0; bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  pointer-events: none; /* clicks pass through except for toasts */
+  z-index: 2000;
+}
+
+.toast {
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 720px;
+  margin: 0 16px;
+  background: var(--error-red);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(2,6,23,0.4);
+  border: 1px solid rgba(0,0,0,0.06);
+  animation: toast-in 220ms ease;
+}
+
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
