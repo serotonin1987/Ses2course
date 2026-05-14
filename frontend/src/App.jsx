@@ -105,6 +105,13 @@ export default function App() {
       });
   }, []);
 
+  // disable header interactions while modal is open to avoid accidental navigation
+  useEffect(() => {
+    if (mode) document.body.classList.add("modal-open");
+    else document.body.classList.remove("modal-open");
+    return () => document.body.classList.remove("modal-open");
+  }, [mode]);
+
   function openAuth(nextMode) {
     setMode(nextMode);
     setForm(emptyForm);

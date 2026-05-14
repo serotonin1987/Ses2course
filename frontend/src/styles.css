@@ -247,6 +247,13 @@ input:focus {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); /* Мягкая тень */
 }
 
+/* When modal is open, prevent accidental navigation in header */
+body.modal-open .header a,
+body.modal-open .header button {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 /* Ссылка-контейнер для лого */
 .brand-logo-link {
   display: flex;
@@ -466,30 +473,40 @@ body.dark .error-message {
   position: relative;
 }
 
+.field-tooltip {
+  position: relative; /* ensure absolute child anchors to input */
+}
+
 .field-tooltip .tooltip-box {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 100%;
+  left: 100%; /* place to the right of the input */
+  top: 50%;
+  transform: translateY(-50%) translateX(10px);
   background: var(--error-red);
   color: #fff;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border-radius: 6px;
-  margin-top: 8px;
   box-shadow: 0 6px 18px rgba(217,0,52,0.18);
   white-space: nowrap;
   z-index: 1200;
+  animation: tooltip-fade 4s forwards; /* stay visible then fade */
 }
 
 .field-tooltip .tooltip-box::after {
   content: "";
   position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
   border-width: 6px;
   border-style: solid;
-  border-color: transparent transparent var(--error-red) transparent;
+  border-color: transparent var(--error-red) transparent transparent;
+}
+
+@keyframes tooltip-fade {
+  0% { opacity: 1; transform: translateY(-50%) translateX(10px); }
+  80% { opacity: 1; transform: translateY(-50%) translateX(10px); }
+  100% { opacity: 0; transform: translateY(-50%) translateX(10px); }
 }
 
 /* Toast container at bottom */
@@ -516,6 +533,17 @@ body.dark .error-message {
   box-shadow: 0 12px 30px rgba(2,6,23,0.4);
   border: 1px solid rgba(0,0,0,0.06);
   animation: toast-in 220ms ease;
+}
+
+.toast.fade {
+  transition: opacity 500ms ease, transform 500ms ease;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.toast.fading {
+  transition: opacity 700ms ease;
+  opacity: 0.08; /* become almost transparent instead of removed */
 }
 
 @keyframes toast-in {
