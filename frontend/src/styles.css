@@ -12,6 +12,7 @@
   --ozon-blue: #005bff;
   --success-green: #039855;
   --error-red: #d92d20;
+  --button-border: rgba(0,0,0,0.06);
 }
 
 /* Темная тема (меняем значения переменных) */
@@ -21,6 +22,8 @@ body.dark {
   --text-main: #f2f5f8;
   --text-secondary: #919eab;
   --border-color: #2d333b;
+  /* lighter border for buttons in dark mode */
+  --button-border: rgba(255,255,255,0.08);
 }
 
 body {
@@ -180,9 +183,10 @@ button {
   /* use text/main and card bg to make it adapt to theme */
   background: var(--card-bg);
   color: var(--text-main);
-  border: 2px solid rgba(0,0,0,0.06);
+  border: 2px solid var(--button-border);
   border-radius: 12px;
   padding: 10px 20px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.12); /* subtle lift for visibility */
 }
 
 .btn-dark:hover {
@@ -344,6 +348,14 @@ visual-box.light { background: var(--card-bg); border: 1px solid var(--border-co
   align-items: center;
 }
 
+/* Внутри модалки: действия (Отмена / Создать/Войти) */
+.auth-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end; /* Выравниваем вправо */
+  margin-top: 8px;
+}
+
 /* Theme toggle button (pill-shaped, matches other pill buttons) */
 .theme-toggle {
   background: var(--card-bg);
@@ -370,6 +382,23 @@ visual-box.light { background: var(--card-bg); border: 1px solid var(--border-co
   background: #fef3f2;
   padding: 10px;
   border-radius: 6px;
+}
+
+/* Boxed error message used in auth modal and forms */
+.error-message {
+  border: 1px solid var(--error-red);
+  background: #ffffff; /* white interior in both themes */
+  color: #111827; /* dark text for readability */
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin: 8px 0 12px;
+  font-size: 14px;
+}
+
+/* Ensure dark theme doesn't override the white box */
+body.dark .error-message {
+  background: #ffffff;
+  color: #111827;
 }
 
 @media (max-width: 900px) {
