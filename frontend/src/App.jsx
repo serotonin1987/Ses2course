@@ -107,9 +107,47 @@ export default function App() {
 
   // disable header interactions while modal is open to avoid accidental navigation
   useEffect(() => {
-    if (mode) document.body.classList.add("modal-open");
-    else document.body.classList.remove("modal-open");
-    return () => document.body.classList.remove("modal-open");
+    const headerEls = Array.from(document.querySelectorAll(".header a, .header button, .header [tabindex]"));
+    if (mode) {
+      document.body.classList.add("modal-open");
+      // prevent background scroll
+      document.body.style.overflow = "hidden";
+      // make header elements unfocusable and mark hidden
+      headerEls.forEach((el) => {
+        const prevTab = el.getAttribute("tabindex");
+        if (prevTab !== null) el.setAttribute("data-prev-tabindex", prevTab);
+        el.setAttribute("data-prev-tabindex", prevTab === null ? "" : prevTab);
+        el.setAttribute("tabindex", "-1");
+        el.setAttribute("aria-hidden", "true");
+      });
+    } else {
+      document.body.classList.remove("modal-open");
+      document.body.style.overflow = "";
+      headerEls.forEach((el) => {
+        const prev = el.getAttribute("data-prev-tabindex");
+        if (prev === "" || prev === null) {
+          el.removeAttribute("tabindex");
+        } else {
+          el.setAttribute("tabindex", prev);
+        }
+        el.removeAttribute("data-prev-tabindex");
+        el.removeAttribute("aria-hidden");
+      });
+    }
+    return () => {
+      document.body.classList.remove("modal-open");
+      document.body.style.overflow = "";
+      headerEls.forEach((el) => {
+        const prev = el.getAttribute("data-prev-tabindex");
+        if (prev === "" || prev === null) {
+          el.removeAttribute("tabindex");
+        } else {
+          el.setAttribute("tabindex", prev);
+        }
+        el.removeAttribute("data-prev-tabindex");
+        el.removeAttribute("aria-hidden");
+      });
+    };
   }, [mode]);
 
   function openAuth(nextMode) {
