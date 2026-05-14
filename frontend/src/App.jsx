@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { apiRequest, clearToken, getToken, setToken } from "./api";
 import logoDark from "./assets/logo-fintracker-dark-v2.png";
 
@@ -23,14 +23,45 @@ export default function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
+  const fieldTimers = useRef({});
+
+  // durations (ms)
+  const FIELD_VISIBLE_MS = 1500; // shorter display time requested
+  const FIELD_FADE_MS = 300;
   const [toasts, setToasts] = useState([]);
 
   function showToast(message, type = "error", duration = 4000) {
-    const id = Date.now() + Math.random();
-    setToasts((t) => [...t, { id, message, type }]);
-    setTimeout(() => {
-      setToasts((t) => t.filter((x) => x.id !== id));
-    }, duration);
+    // dedupe: if same message exists, reset its timers instead of stacking
+    setToasts((prev) => {
+      // try find existing message
+      const existing = prev.find((x) => x.message === message);
+      if (existing) {
+        // clear previous timers if present
+        try { clearTimeout(existing._fadeTimer); } catch (e) {}
+        try { clearTimeout(existing._removeTimer); } catch (e) {}
+
+        const id = existing.id;
+        // schedule fade then removal
+        const fadeTimer = setTimeout(() => {
+          setToasts((t) => t.map((x) => (x.id === id ? { ...x, fading: true } : x)));
+        }, duration);
+        const removeTimer = setTimeout(() => {
+          setToasts((t) => t.filter((x) => x.id !== id));
+        }, duration + 500);
+
+        return prev.map((x) => (x.id === id ? { ...x, type, fading: false, _fadeTimer: fadeTimer, _removeTimer: removeTimer } : x));
+      }
+
+      const id = Date.now() + Math.random();
+      const fadeTimer = setTimeout(() => {
+        setToasts((t) => t.map((x) => (x.id === id ? { ...x, fading: true } : x)));
+      }, duration);
+      const removeTimer = setTimeout(() => {
+        setToasts((t) => t.filter((x) => x.id !== id));
+      }, duration + 500); // give 500ms for fade animation
+
+      return [...prev, { id, message, type, fading: false, _fadeTimer: fadeTimer, _removeTimer: removeTimer }];
+    });
   }
   
 
@@ -99,17 +130,49 @@ export default function App() {
     event.preventDefault();
     // custom validation: disable native tooltips and show our styled messages
     const formEl = event.target;
-    // reset field errors
+    // reset field errors and clear any existing timers
+    Object.values(fieldTimers.current).forEach((t) => clearTimeout(t));
+    fieldTimers.current = {};
     setFieldErrors({});
     if (!formEl.checkValidity()) {
-      // collect per-field messages
+      // collect per-field messages and schedule auto-fade/removal
       const newErrors = {};
       Array.from(formEl.elements).forEach((el) => {
         if (el.name && el.tagName === "INPUT") {
-          if (!el.checkValidity()) newErrors[el.name] = el.validationMessage || "Заполните это поле.";
+          if (!el.checkValidity()) {
+            const msg = el.validationMessage || "Заполните это поле.";
+            newErrors[el.name] = { msg, fading: false };
+          }
         }
       });
-      setFieldErrors(newErrors);
+      // set errors then schedule timers
+      setFieldErrors((prev) => ({ ...prev, ...newErrors }));
+      Object.keys(newErrors).forEach((name) => {
+        // clear existing timers for this field
+        if (fieldTimers.current[name]) {
+          clearTimeout(fieldTimers.current[name].fade);
+          clearTimeout(fieldTimers.current[name].remove);
+        }
+        const fade = setTimeout(() => {
+          setFieldErrors((prev) => prev[name] ? { ...prev, [name]: { ...prev[name], fading: true } } : prev);
+        }, FIELD_VISIBLE_MS);
+        const remove = setTimeout(() => {
+          setFieldErrors((prev) => {
+            if (!prev[name]) return prev;
+            const copy = { ...prev };
+            delete copy[name];
+            return copy;
+          });
+          // clear timers
+          if (fieldTimers.current[name]) {
+            clearTimeout(fieldTimers.current[name].fade);
+            clearTimeout(fieldTimers.current[name].remove);
+            delete fieldTimers.current[name];
+          }
+        }, FIELD_VISIBLE_MS + FIELD_FADE_MS + 50);
+        fieldTimers.current[name] = { fade, remove };
+      });
+      return;
       return;
     }
 
@@ -187,7 +250,7 @@ export default function App() {
               <input name="password" placeholder="Пароль" type="password" value={form.password} onChange={updateField} required />
               {fieldErrors.password && <div className="tooltip-box">{fieldErrors.password}</div>}
             </div>
-            {error && <p className="error-message">{error}</p>}
+            {/* inline top error removed: server errors will be shown as bottom toasts */}
             <div className="auth-actions">
               <button type="button" className="btn-cancel" onClick={() => setMode(null)}>Отмена</button>
               <button className="btn-primary" type="submit" disabled={loading}>
@@ -263,7 +326,7 @@ export default function App() {
       {/* Toasts */}
       <div className="toast-wrap">
         {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.type}`}>
+          <div key={t.id} className={`toast toast-${t.type} ${t.fading ? "fade" : ""}`}>
             {t.message}
           </div>
         ))}
