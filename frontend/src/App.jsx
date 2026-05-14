@@ -22,6 +22,7 @@ export default function App() {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   
 
   // --- НОВЫЕ СОСТОЯНИЯ ДЛЯ MVP ---
@@ -71,14 +72,38 @@ export default function App() {
   }
 
   function updateField(event) {
+    const { name, value } = event.target;
     setForm((current) => ({
       ...current,
-      [event.target.name]: event.target.value,
+      [name]: value,
     }));
+    // clear per-field error when user edits
+    setFieldErrors((prev) => {
+      if (!prev || !prev[name]) return prev;
+      const copy = { ...prev };
+      delete copy[name];
+      return copy;
+    });
   }
 
   async function submitAuth(event) {
     event.preventDefault();
+    // custom validation: disable native tooltips and show our styled messages
+    const formEl = event.target;
+    // reset field errors
+    setFieldErrors({});
+    if (!formEl.checkValidity()) {
+      // collect per-field messages
+      const newErrors = {};
+      Array.from(formEl.elements).forEach((el) => {
+        if (el.name && el.tagName === "INPUT") {
+          if (!el.checkValidity()) newErrors[el.name] = el.validationMessage || "Заполните это поле.";
+        }
+      });
+      setFieldErrors(newErrors);
+      return;
+    }
+
     setLoading(true);
     setError("");
     const path = mode === "register" ? "/auth/register/" : "/auth/login/";
@@ -124,8 +149,8 @@ export default function App() {
             </>
           ) : (
             <>
-              <button className="btn-dark" onClick={() => openAuth("login")}>Войти</button>
-              <button className="btn-dark" onClick={() => openAuth("register")}>Регистрация</button>
+              <button className="btn-secondary" onClick={() => openAuth("login")}>Войти</button>
+              <button className="btn-ghost" onClick={() => openAuth("register")}>Регистрация</button>
             </>
           )}
         </div>
@@ -133,13 +158,22 @@ export default function App() {
 
       {mode && (
         <div className="modal-overlay">
-          <form className="auth-panel" onSubmit={submitAuth}>
+          <form className="auth-panel" onSubmit={submitAuth} noValidate>
             <h2>{mode === "register" ? "Создать аккаунт" : "С возвращением"}</h2>
-            <input name="username" placeholder="Логин" value={form.username} onChange={updateField} required />
+            <div className="field-tooltip">
+              <input name="username" placeholder="Логин" value={form.username} onChange={updateField} required />
+              {fieldErrors.username && <div className="tooltip-box">{fieldErrors.username}</div>}
+            </div>
             {mode === "register" && (
-              <input name="email" placeholder="Email" type="email" value={form.email} onChange={updateField} required />
+              <div className="field-tooltip">
+                <input name="email" placeholder="Email" type="email" value={form.email} onChange={updateField} required />
+                {fieldErrors.email && <div className="tooltip-box">{fieldErrors.email}</div>}
+              </div>
             )}
-            <input name="password" placeholder="Пароль" type="password" value={form.password} onChange={updateField} required />
+            <div className="field-tooltip">
+              <input name="password" placeholder="Пароль" type="password" value={form.password} onChange={updateField} required />
+              {fieldErrors.password && <div className="tooltip-box">{fieldErrors.password}</div>}
+            </div>
             {error && <p className="error-message">{error}</p>}
             <div className="auth-actions">
               <button type="button" className="btn-cancel" onClick={() => setMode(null)}>Отмена</button>

@@ -460,3 +460,34 @@ body.dark .error-message {
 .password-wrapper button:hover {
   color: #000;
 }
+
+/* Inline field tooltip (replaces native browser tooltip) */
+.field-tooltip {
+  position: relative;
+}
+
+.field-tooltip .tooltip-box {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100%;
+  background: var(--error-red);
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 8px;
+  box-shadow: 0 6px 18px rgba(217,0,52,0.18);
+  white-space: nowrap;
+  z-index: 1200;
+}
+
+.field-tooltip .tooltip-box::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent var(--error-red) transparent;
+}
