@@ -120,6 +120,27 @@ export default function App() {
         el.setAttribute("tabindex", "-1");
         el.setAttribute("aria-hidden", "true");
       });
+      // capturing listeners to prevent any anchor navigation or Enter key activation while modal open
+      const onCaptureClick = (ev) => {
+        const a = ev.target.closest && ev.target.closest("a[href]");
+        if (a) {
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      };
+      const onCaptureKey = (ev) => {
+        if (ev.key === "Enter") {
+          const a = ev.target.closest && ev.target.closest("a[href]");
+          if (a) {
+            ev.preventDefault();
+            ev.stopPropagation();
+          }
+        }
+      };
+      document.addEventListener("click", onCaptureClick, true);
+      document.addEventListener("keydown", onCaptureKey, true);
+      // store listeners to remove later
+  document._modal_capture = { onCaptureClick, onCaptureKey };
     } else {
       document.body.classList.remove("modal-open");
       document.body.style.overflow = "";
@@ -133,11 +154,18 @@ export default function App() {
         el.removeAttribute("data-prev-tabindex");
         el.removeAttribute("aria-hidden");
       });
+      // remove capturing listeners if present
+  const handlers = document._modal_capture;
+      if (handlers) {
+        document.removeEventListener("click", handlers.onCaptureClick, true);
+        document.removeEventListener("keydown", handlers.onCaptureKey, true);
+  delete document._modal_capture;
+      }
     }
     return () => {
       document.body.classList.remove("modal-open");
       document.body.style.overflow = "";
-      headerEls.forEach((el) => {
+  headerEls.forEach((el) => {
         const prev = el.getAttribute("data-prev-tabindex");
         if (prev === "" || prev === null) {
           el.removeAttribute("tabindex");
@@ -147,6 +175,12 @@ export default function App() {
         el.removeAttribute("data-prev-tabindex");
         el.removeAttribute("aria-hidden");
       });
+  const handlers = document._modal_capture;
+      if (handlers) {
+        document.removeEventListener("click", handlers.onCaptureClick, true);
+        document.removeEventListener("keydown", handlers.onCaptureKey, true);
+  delete document._modal_capture;
+      }
     };
   }, [mode]);
 
