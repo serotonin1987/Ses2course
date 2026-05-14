@@ -403,19 +403,25 @@ visual-box.light { background: var(--card-bg); border: 1px solid var(--border-co
 
 /* Boxed error message used in auth modal and forms */
 .error-message {
-  border: 1px solid var(--error-red);
-  background: #ffffff; /* white interior in both themes */
-  color: #111827; /* dark text for readability */
-  padding: 12px 14px;
-  border-radius: 10px;
+  /* filled red pill-style error message (matches .btn-danger) */
+  display: block;
+  width: 100%;
+  background: var(--error-red);
+  color: #ffffff;
+  border: 2px solid var(--error-red);
+  padding: 12px 16px;
+  border-radius: 9999px; /* pill */
   margin: 8px 0 12px;
   font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(217,0,52,0.12);
 }
 
 /* Ensure dark theme doesn't override the white box */
 body.dark .error-message {
-  background: #ffffff;
-  color: #111827;
+  /* keep filled red with white text in dark theme too */
+  background: var(--error-red);
+  color: #ffffff;
 }
 
 @media (max-width: 900px) {
