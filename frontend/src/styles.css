@@ -178,6 +178,23 @@ button {
   background: #004ecc;
 }
 
+/* Danger / Save button (rounded red) */
+.btn-danger, .btn-save {
+  background: #d90034; /* bright red */
+  color: #ffffff;
+  border: 2px solid #d90034;
+  border-radius: 9999px;
+  padding: 10px 20px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(217,0,52,0.12);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn-danger:hover, .btn-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(217,0,52,0.16);
+}
+
 /* Темная кнопка (как "Войти" на скрине) */
 .btn-dark {
   /* use text/main and card bg to make it adapt to theme */
